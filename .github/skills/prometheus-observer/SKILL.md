@@ -1,4 +1,3 @@
-```skill
 ---
 name: prometheus-observer
 description: 'Observe and report on Prometheus installation state, active alerts, AlertManager configuration, and rule evaluation status'
@@ -114,4 +113,3 @@ This skill provides the observational foundation for:
 - **AlertManager Installer** - Understanding current state before changes
 - **KSM Crossplane Adapter** - Validating new metrics are collected
 - **Resource Template Engine** - Confirming new alerts activate properly
-```

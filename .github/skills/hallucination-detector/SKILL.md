@@ -1,4 +1,3 @@
-```skill
 ---
 name: hallucination-detector
 description: 'Detect potential hallucinations by tracing claims back to source materials and validating whether fetched information was actually used to support conclusions'
@@ -298,4 +297,3 @@ When activated, I systematically review claims by:
 5. Suggesting verification steps where needed
 
 The goal is not perfect detection but improved awareness and validation practices.
-```

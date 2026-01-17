@@ -1,4 +1,3 @@
-```skill
 ---
 name: alertmanager-installer
 description: 'Install and configure AlertManager following fluxcd.io monitoring guide patterns and best practices for Kubernetes environments'
@@ -259,4 +258,3 @@ This skill enables:
 - **Prometheus Observer** - Validates installation success
 - **KSM Crossplane Adapter** - Provides alerting foundation for custom metrics
 - **Resource Template Engine** - Ensures new alerts have proper notification routing
-```

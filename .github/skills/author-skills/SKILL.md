@@ -1,4 +1,3 @@
-```skill
 ---
 name: author-skills
 description: 'Write SKILL.md for the user using all available wisdom and documented guidance about how Agent Skills are made. New skills are written carefully to be orthogonal to the existing skills in the same repo.'
@@ -55,7 +54,7 @@ allowed-tools: ['read_file', 'grep_search', 'run_in_terminal', 'semantic_search'
 ## Embedded Examples
 
 ### Example 1: Monitoring Skill Structure
-```skill
+```yaml
 ---
 name: prometheus-observer
 description: 'Observe and report on Prometheus installation state, alerts, and AlertManager configuration'
@@ -81,7 +80,7 @@ I analyze running Prometheus installations to report current alert states and co
 ```
 
 ### Example 2: Implementation Skill Structure
-```skill
+```yaml
 ---
 name: alertmanager-installer
 description: 'Install and configure AlertManager following fluxcd.io monitoring guide patterns'
@@ -137,4 +136,3 @@ When SKILL.md exceeds 500 lines, use:
 Use when user says: "author", "author skill", "author a skill", "new agent skill", "create skill", "write skill", "make skill", "build skill", "design skill".
 
 Do not activate for: editing existing skills, general coding tasks, or non-skill creation requests.
-```

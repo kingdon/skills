@@ -1,4 +1,3 @@
-```skill
 ---
 name: resource-template-engine
 description: 'Operate the templating system for onboarding new Crossplane resource types with automated metric configuration and alert rule generation'
@@ -381,4 +380,3 @@ This skill orchestrates the complete monitoring onboarding process:
 - **Author Skills** - Used when new resource categories require template expansion
 
 The engine operates autonomously but reports when manual intervention is needed for truly novel resource patterns.
-```
