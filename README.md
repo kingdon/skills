@@ -54,4 +54,8 @@ See [AGENTS.md](AGENTS.md) for agent-specific development guidelines. Use the Au
 
 ## License
 
-Apache 2.0 - See [LICENSE](LICENSE) for full terms.
+Apache 2.0 - See [LICENSE](LICENSE) for full terms.# TDG Skills Integration
+
+We've integrated the excellent TDG (Test-Driven Generation) skills from https://github.com/chanwit/tdg as reference implementations and for immediate use.
+
+These skills demonstrate proper formatting and patterns that we follow in our own skill development.
