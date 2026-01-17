@@ -74,10 +74,10 @@ curl -s http://prometheus:9090/api/v1/query?query=up | jq '.data.result[] | {job
 
 ## Monitoring Patterns
 
-### Flux-Specific Alerts
-- `FluxBucketNotReady` - Source repository issues
-- `FluxKustomizationNotReady` - Application deployment failures
-- `FluxHelmReleaseNotReady` - Helm chart deployment issues
+### Application-Specific Alerts
+- Application readiness monitoring
+- Deployment failure detection
+- Component availability tracking
 
 ### AlertManager Routing Validation
 ```yaml

@@ -146,10 +146,10 @@ confidence_levels:
     - Highly specific claims without verification
 ```
 
-## Strawberry-Inspired Mathematical Approach
+## Mathematical Validation Approach
 
 ### Information Flow Tracking
-Based on the "strawberry" project concept of mathematical hallucination detection:
+Mathematical approach to hallucination detection:
 
 ```python
 # Track information flow from sources to claims

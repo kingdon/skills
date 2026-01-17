@@ -323,7 +323,7 @@ kubectl get prometheusrule -n monitoring | grep crossplane-${KIND,,}
 ## Error Handling and Rollback
 
 ### Common Template Issues
-1. **Invalid JSONPath**: Resource doesn't have expected condition structure
+1. **Invalid Resource Paths**: Resource doesn't have expected structure
 2. **High cardinality**: Resource creates too many metric series
 3. **Missing permissions**: KSM can't access resource type
 

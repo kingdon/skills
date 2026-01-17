@@ -73,7 +73,7 @@ data:
       metricLabelsAllowlist:
         - customresources=[crossplane.io/composite,crossplane.io/claim-name]
       metricAnnotationsAllowlist:
-        - customresources=[crossplane.io/external-name]
+        - customresources=[crossplane.io/*]
 ```
 
 ### Crossplane-Specific Metrics

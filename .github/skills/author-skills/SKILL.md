@@ -83,13 +83,13 @@ I analyze running Prometheus installations to report current alert states and co
 ```yaml
 ---
 name: alertmanager-installer
-description: 'Install and configure AlertManager following fluxcd.io monitoring guide patterns'
+description: 'Install and configure AlertManager following monitoring guide patterns'
 allowed-tools: ['read_file', 'create_file', 'replace_string_in_file', 'run_in_terminal']
 ---
 
 # AlertManager Installation Expert
 
-I install and configure AlertManager using Flux monitoring patterns from the 5-part fluxcd.io guide.
+I install and configure AlertManager using monitoring patterns and best practices.
 
 ## When I Activate
 - "Install AlertManager"
