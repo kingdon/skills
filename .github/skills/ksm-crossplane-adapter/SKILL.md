@@ -1,4 +1,3 @@
-```skill
 ---
 name: ksm-crossplane-adapter
 description: 'Adapt kube-state-metrics configuration for monitoring non-Flux resources like Crossplane Managed Resources and Compositions beyond standard KStatus patterns'
@@ -74,7 +73,7 @@ data:
       metricLabelsAllowlist:
         - customresources=[crossplane.io/composite,crossplane.io/claim-name]
       metricAnnotationsAllowlist:
-        - customresources=[crossplane.io/external-name]
+        - customresources=[crossplane.io/*]
 ```
 
 ### Crossplane-Specific Metrics
@@ -282,4 +281,3 @@ This skill provides the knowledge foundation for:
 - **AlertManager Installer** - Ensures alerts have proper routing
 
 The template generation and application process is handled by the Resource Template Engine skill.
-```

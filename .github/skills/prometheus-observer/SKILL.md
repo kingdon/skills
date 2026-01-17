@@ -1,4 +1,3 @@
-```skill
 ---
 name: prometheus-observer
 description: 'Observe and report on Prometheus installation state, active alerts, AlertManager configuration, and rule evaluation status'
@@ -75,10 +74,10 @@ curl -s http://prometheus:9090/api/v1/query?query=up | jq '.data.result[] | {job
 
 ## Monitoring Patterns
 
-### Flux-Specific Alerts
-- `FluxBucketNotReady` - Source repository issues
-- `FluxKustomizationNotReady` - Application deployment failures
-- `FluxHelmReleaseNotReady` - Helm chart deployment issues
+### Application-Specific Alerts
+- Application readiness monitoring
+- Deployment failure detection
+- Component availability tracking
 
 ### AlertManager Routing Validation
 ```yaml
@@ -114,4 +113,3 @@ This skill provides the observational foundation for:
 - **AlertManager Installer** - Understanding current state before changes
 - **KSM Crossplane Adapter** - Validating new metrics are collected
 - **Resource Template Engine** - Confirming new alerts activate properly
-```

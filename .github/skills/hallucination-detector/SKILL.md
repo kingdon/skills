@@ -1,4 +1,3 @@
-```skill
 ---
 name: hallucination-detector
 description: 'Detect potential hallucinations by tracing claims back to source materials and validating whether fetched information was actually used to support conclusions'
@@ -147,10 +146,10 @@ confidence_levels:
     - Highly specific claims without verification
 ```
 
-## Strawberry-Inspired Mathematical Approach
+## Mathematical Validation Approach
 
 ### Information Flow Tracking
-Based on the "strawberry" project concept of mathematical hallucination detection:
+Mathematical approach to hallucination detection:
 
 ```python
 # Track information flow from sources to claims
@@ -298,4 +297,3 @@ When activated, I systematically review claims by:
 5. Suggesting verification steps where needed
 
 The goal is not perfect detection but improved awareness and validation practices.
-```

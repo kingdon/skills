@@ -1,13 +1,12 @@
-```skill
 ---
 name: alertmanager-installer
-description: 'Install and configure AlertManager following fluxcd.io monitoring guide patterns and best practices for Kubernetes environments'
+description: 'Install and configure AlertManager following monitoring guide patterns and best practices for Kubernetes environments'
 allowed-tools: ['read_file', 'create_file', 'replace_string_in_file', 'run_in_terminal', 'semantic_search']
 ---
 
 # AlertManager Installation Expert
 
-I install and configure AlertManager using Flux monitoring patterns from the official 5-part fluxcd.io monitoring guide, ensuring proper integration with existing Prometheus and Kubernetes infrastructure.
+I install and configure AlertManager using monitoring patterns and best practices for Kubernetes environments.
 
 ## When I Activate
 - "Install AlertManager"
@@ -16,10 +15,10 @@ I install and configure AlertManager using Flux monitoring patterns from the off
 - "Deploy AlertManager with Flux"
 - "Monitoring guide setup"
 
-## 5-Part Flux Monitoring Guide Knowledge
+## Monitoring Guide Knowledge
 
-### Part 1: Monitoring Stack Setup
-**Purpose**: Establish the foundational monitoring infrastructure
+### Essential Components
+**Purpose**: Establish foundational monitoring infrastructure
 **Key Components**: 
 - Prometheus Operator via Helm
 - ServiceMonitors for automatic discovery
@@ -41,7 +40,7 @@ spec:
         name: prometheus-community
 ```
 
-### Part 2: AlertManager Configuration
+### AlertManager Configuration
 **Purpose**: Configure notification routing and receiver setup
 **Key Concepts**:
 - Route hierarchy and grouping
@@ -66,12 +65,12 @@ alertmanager:
           - url: 'http://webhook-service/alerts'
 ```
 
-### Part 3: Custom Alerts for Flux Components
-**Purpose**: Monitor Flux-specific resources and state changes
+### Custom Alerts for Applications
+**Purpose**: Monitor application-specific resources and state changes
 **Alert Categories**:
-- Source readiness (GitRepository, Bucket, HelmRepository)
-- Kustomization deployment status
-- Helm release health
+- Application readiness and health
+- Resource deployment status
+- Component availability
 
 ```yaml
 # Example Flux alert rule
@@ -87,17 +86,17 @@ groups:
           summary: "Flux component {{ $labels.kind }}/{{ $labels.name }} not ready"
 ```
 
-### Part 4: Application-Level Monitoring
+### Application-Level Monitoring
 **Purpose**: Extend monitoring to application workloads
 **Integration Points**:
 - PodMonitors for application metrics
 - ServiceMonitors for service discovery
 - Custom recording rules for SLIs
 
-### Part 5: Grafana Dashboard Integration  
+### Dashboard Integration  
 **Purpose**: Visualization and operational dashboards
 **Components**:
-- Pre-configured Flux dashboards
+- Pre-configured monitoring dashboards
 - Alert status visualization
 - Resource utilization tracking
 
@@ -146,7 +145,7 @@ spec:
   chart:
     spec:
       chart: alertmanager
-      version: '0.25.x'
+      version: '^0.25.0'
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
@@ -247,10 +246,10 @@ curl http://prometheus:9090/api/v1/query?query=alertmanager_up
 kubectl logs -n monitoring deployment/alertmanager
 
 # Validate configuration  
-amtool config check --config=/etc/alertmanager/alertmanager.yml
+kubectl logs -n monitoring deployment/alertmanager
 
-# Test routing
-amtool config routes test --config.file=/etc/alertmanager/alertmanager.yml
+# Check configuration via API
+curl http://alertmanager:9093/api/v1/status
 ```
 
 ## Integration Points
@@ -259,4 +258,3 @@ This skill enables:
 - **Prometheus Observer** - Validates installation success
 - **KSM Crossplane Adapter** - Provides alerting foundation for custom metrics
 - **Resource Template Engine** - Ensures new alerts have proper notification routing
-```
