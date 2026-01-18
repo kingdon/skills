@@ -1,4 +1,3 @@
-```skill
 ---
 name: flux-operator
 description: 'Install and validate Flux Operator installations, check GitOps connectivity, access the Flux UI status page, and configure MCP server integration. Trigger with /flux-status'
@@ -403,5 +402,4 @@ kubectl get events -n flux-system
 # Version info
 flux-operator version
 kubectl get fluxinstance flux -n flux-system -o jsonpath='{.status.revision}'
-```
 ```
