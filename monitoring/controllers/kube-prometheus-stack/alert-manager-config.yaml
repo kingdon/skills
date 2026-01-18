@@ -1,0 +1,138 @@
+alertmanager:
+  enabled: "true"
+  resources:
+    requests:
+      memory: 400Mi
+      cpu: 200m
+  alertmanagerSpec:
+    resources:
+      limits:
+        memory: 400Mi
+        cpu: 100m
+      requests:
+        memory: 200Mi
+        cpu: 15m
+    # storage:
+    #   volumeClaimTemplate:
+    #     spec:
+    #       storageClassName: longhorn
+    #       accessModes: ["ReadWriteOnce"]
+    #       resources:
+    #           requests:
+    #             storage: 10Gi
+  config:
+    global:
+      resolve_timeout: 10m
+     #slack_api_url: url ## secret obtained via valuesFrom
+    inhibit_rules:
+    - equal:
+      - namespace
+      - alertname
+      source_matchers:
+      - severity = critical
+      target_matchers:
+      - severity =~ warning|info
+    - equal:
+      - namespace
+      - alertname
+      source_matchers:
+      - severity = warning
+      target_matchers:
+      - severity = info
+    - equal:
+      - namespace
+      source_matchers:
+      - alertname = InfoInhibitor
+      target_matchers:
+      - severity = info
+
+    route:
+      group_by: ['job']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: slack
+      routes:
+      - match:
+          alertname: Watchdog
+        receiver: Watchdog
+      - match:
+          alertname: InfoInhibitor
+        receiver: 'null'
+      - match:
+          alertname: Critical
+        receiver: Critical
+    receivers:
+    - name: slack
+      slack_configs:
+      - send_resolved: true
+        title: '{{ template "slack.title" . }}'
+        icon_emoji: '{{ template "slack.icon_emoji" . }}'
+        color: '{{ template "slack.color" . }}'
+        text: '{{ template "slack.text" . }}'
+    - name: "Watchdog"
+    - name: "Critical"
+      slack_configs:
+      - send_resolved: true
+        title: '{{ template "slack.title" . }}'
+        icon_emoji: '{{ template "slack.icon_emoji" . }}'
+        color: '{{ template "slack.color" . }}'
+        text: '{{ template "slack.text" . }}'
+    - name: "null"
+    templates:
+    - '/etc/alertmanager/config/*.tmpl'
+  templateFiles:
+    alert_template.tmpl: |-
+      # https://github.com/prometheus-operator/kube-prometheus/blob/ddfbed0d8916324ddef5dfcc618f05751715a3e0/examples/alertmanager-alert-template.tmpl
+      # to know more about custom template language read alertmanager documentation
+      # inspired by : https://gist.github.com/milesbxf/e2744fc90e9c41b47aa47925f8ff6512
+      {{ define "__alert_severity_prefix_title" -}}
+          {{ if ne .Status "firing" -}}
+          🤞
+          {{- else if eq .CommonLabels.severity "critical" -}}
+          🔥
+          {{- else if eq .CommonLabels.severity "warning" -}}
+          ⚠️
+          {{- else if eq .CommonLabels.severity "info" -}}
+          ℹ️
+          {{- else -}}
+          ❓
+          {{- end }}
+      {{- end }}
+
+      {{ define "slack.title" -}}
+          [{{ .Status | toUpper -}}
+          {{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end -}}
+          ] {{ template "__alert_severity_prefix_title" . }} {{ .CommonLabels.alertname }}
+      {{- end }}
+
+      {{ define "slack.color" -}}
+          {{ if eq .Status "firing" -}}
+              {{ if eq .CommonLabels.severity "warning" -}}
+                  warning
+              {{- else if eq .CommonLabels.severity "critical" -}}
+                  danger
+              {{- else -}}
+                  #439FE0
+              {{- end -}}
+          {{ else -}}
+          good
+          {{- end }}
+      {{- end }}
+
+      {{ define "slack.icon_emoji" }}:prometheus:{{ end }}
+
+      {{/* The test to display in the alert */}}
+        {{ define "slack.text" -}}
+          {{ range .Alerts }}
+              {{- if .Annotations.message }}
+                  {{ .Annotations.message }}
+              {{- end }}
+              {{- if .Annotations.summary }}
+                  {{ .Annotations.summary }}
+              {{- end }}
+              {{- if .Annotations.description }}
+                  {{ .Annotations.description }}
+              {{- end }}
+          {{- end }}
+      {{- end }}
