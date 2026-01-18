@@ -1,0 +1,227 @@
+values:
+  apiGroups:
+    - urmanac.com
+    - moons.urmanac.com
+    - planets.urmanac.com
+    - kubernetes.crossplane.io
+    - helm.crossplane.io
+    - ec2.aws.upbound.io
+    - efs.aws.upbound.io
+    - eks.aws.upbound.io
+    - iam.aws.upbound.io
+    - groups.gitlab.crossplane.io
+    - projects.gitlab.crossplane.io
+  resources:
+    - stars
+    - comets
+    - vpcsubnets
+    - iamsas
+    - exdns
+    - xstars
+    - xcomets
+    - xvpcsubnets
+    - xiamsas
+    - xexdns
+    - objects
+    - releases
+    - roles
+    - rolepolicyattachments
+    - policies
+    - clusterauths
+    - addons
+    - accesspolicyassociations
+    - accessentries
+    - identityproviderconfigs
+    - clusters
+    - filesystems
+    - internetgateways
+    - routes
+    - routetableassociations
+    - routetables
+    - subnets
+    - natgateways
+    - eips
+    - vpcs
+    - vpcendpoints
+    - vpcendpointroutetableassociations
+    - groups
+    - projects
+    - openidconnectproviders
+
+  details:
+    # X-Resources
+    - kind: XStars
+      version: v1alpha1
+      group: urmanac.com
+      namespaced: false
+      resourceConfigs:
+        - cbaAccount
+    - kind: XComets
+      version: v1alpha1
+      group: cluster.urmanac.com
+      namespaced: false
+      resourceConfigs:
+        - region
+      providerConfigInProject: true
+    - kind: XvpcSubnet
+      version: v1alpha1
+      group: network.urmanac.com
+      namespaced: false
+      resourceConfigs:
+        - region
+      providerConfigInResourceConfig: true
+    - kind: XIamSa
+      version: v1alpha1
+      group: urmanac.com
+      namespaced: false
+      resourceConfigs:
+        - region
+      providerConfigInResourceConfig: true
+    - kind: XExDNS
+      version: v1alpha1
+      group: urmanac.com
+      namespaced: false
+      resourceConfigs:
+        - region
+      providerConfigInProject: true
+    # Composition Kinds
+    - kind: Stars
+      version: v1alpha1
+      group: urmanac.com
+      namespaced: true
+      resourceConfigs:
+        - cbaAccount
+    - kind: Comets
+      version: v1alpha1
+      group: cluster.urmanac.com
+      namespaced: true
+      resourceConfigs:
+        - region
+      providerConfigInProject: true
+    - kind: vpcSubnet
+      version: v1alpha1
+      group: network.urmanac.com
+      namespaced: true
+      resourceConfigs:
+        - region
+      providerConfigInResourceConfig: true
+    - kind: IamSa
+      version: v1alpha1
+      group: urmanac.com
+      namespaced: true
+      resourceConfigs:
+        - region
+      providerConfigInResourceConfig: true
+    - kind: ExDNS
+      version: v1alpha1
+      group: urmanac.com
+      namespaced: true
+      resourceConfigs:
+        - region
+      providerConfigInProject: true
+    # Managed Resources (AWS EC2)
+    - kind: Route
+      version: v1beta1
+      group: ec2.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: RouteTable
+      version: v1beta1
+      group: ec2.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: RouteTableAssociation
+      version: v1beta1
+      group: ec2.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: VPCEndpoint
+      version: v1beta1
+      group: ec2.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: EIP
+      version: v1beta1
+      group: ec2.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: InternetGateway
+      version: v1beta1
+      group: ec2.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: NATGateway
+      version: v1beta1
+      group: ec2.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: Subnet
+      version: v1beta1
+      group: ec2.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: VPCEndpointRouteTableAssociation
+      version: v1beta1
+      group: ec2.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: VPC
+      version: v1beta1
+      group: ec2.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    # Managed Resources (AWS EFS)
+    - kind: FileSystem
+      version: v1alpha1
+      group: efs.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    # Managed Resources (AWS EKS)
+    - kind: Cluster
+      version: v1beta2
+      group: helm.crossplane.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    # Managed Resources (AWS IAM)
+    - kind: OpenIDConnectProvider
+      version: v1beta1
+      group: iam.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: Role
+      version: v1beta1
+      group: iam.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: Policy
+      version: v1beta1
+      group: iam.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: RolePolicyAttachment
+      version: v1beta1
+      group: iam.aws.upbound.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    # Managed Resources (GitLab)
+    - kind: Group
+      version: v1alpha1
+      group: groups.gitlab.crossplane.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: Project
+      version: v1alpha1
+      group: projects.gitlab.crossplane.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    # Managed Resources (Kubernetes & Helm)
+    - kind: Object
+      version: v1alpha1
+      group: kubernetes.crossplane.io
+      namespaced: false
+      providerConfigInResourceConfig: false
+    - kind: Release
+      version: v1beta1
+      group: helm.crossplane.io
+      namespaced: false
+      providerConfigInResourceConfig: false
