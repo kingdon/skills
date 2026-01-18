@@ -20,3 +20,9 @@ spec:
     multitenant: false
     networkPolicy: true
     domain: "cluster.local"
+  sync:
+    kind: GitRepository
+    url: "ssh://git@github.com/kingdon/skills.git"
+    ref: "refs/heads/main"
+    path: "clusters/k3s"
+    pullSecret: "flux-system"
