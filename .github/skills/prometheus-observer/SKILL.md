@@ -1,6 +1,6 @@
 ---
 name: prometheus-observer
-description: 'Observe and report on Prometheus installation state, active alerts, AlertManager configuration, and rule evaluation status'
+description: 'Observe and report on Prometheus installation state, active alerts, AlertManager configuration, and rule evaluation status. Trigger with /prometheus-status'
 allowed-tools: ['read_file', 'run_in_terminal', 'grep_search', 'semantic_search', 'get_terminal_output']
 ---
 
@@ -8,13 +8,45 @@ allowed-tools: ['read_file', 'run_in_terminal', 'grep_search', 'semantic_search'
 
 I analyze running Prometheus installations to provide comprehensive reports on current alert states, configuration health, and system status without making any modifications.
 
+## Slash Command
+
+### `/prometheus-status`
+Runs the full autonomous validation workflow:
+1. Verify Kubernetes cluster connectivity
+2. Check Prometheus and AlertManager pods exist
+3. Test port-forwarded endpoints (localhost:9090, localhost:9093)
+4. Query active alerts and report status
+5. Check scrape target health
+
+**Usage**: Just type `/prometheus-status` and I will execute the validation script and report results.
+
+**Script Verification**: Before executing, verify the script integrity:
+```bash
+sha256sum .github/skills/prometheus-observer/scripts/validate.sh
+# Expected: check current hash after creation
+```
+
+**Execute validation**:
+```bash
+bash .github/skills/prometheus-observer/scripts/validate.sh
+```
+
 ## When I Activate
+- `/prometheus-status` (slash command)
+- "Is Prometheus running?"
 - "Check Prometheus status"
 - "What alerts are firing?"
 - "Validate AlertManager config"
 - "Show Prometheus rules"
 - "Prometheus health check"
 - "Alert analysis"
+
+## Port-Forward Assumptions
+This skill assumes port-forwards are active or can be started:
+- **Prometheus**: `kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090 &`
+- **AlertManager**: `kubectl port-forward -n monitoring svc/kube-prometheus-stack-alertmanager 9093:9093 &`
+
+If port-forwards are not running, the validation script will detect this and provide the commands to start them.
 
 ## Core Capabilities
 

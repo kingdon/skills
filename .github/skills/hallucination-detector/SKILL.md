@@ -1,6 +1,6 @@
 ---
 name: hallucination-detector
-description: 'Detect potential hallucinations by tracing claims back to source materials and validating whether fetched information was actually used to support conclusions'
+description: 'Detect potential hallucinations by tracing claims back to source materials and validating whether fetched information was actually used to support conclusions. Trigger with /hallucination-check'
 allowed-tools: ['read_file', 'semantic_search', 'grep_search', 'fetch_webpage', 'list_dir']
 ---
 
@@ -8,13 +8,71 @@ allowed-tools: ['read_file', 'semantic_search', 'grep_search', 'fetch_webpage', 
 
 I help identify potential hallucinations by analyzing whether claims and statements are properly grounded in available source materials, inspired by mathematical approaches that trace information provenance.
 
+## Slash Command
+
+### `/hallucination-check`
+Runs a structured validation workflow on recent claims or responses:
+1. **Claim Extraction**: Identify all factual assertions in the target text
+2. **Source Identification**: List all sources that were referenced or should have been consulted
+3. **Provenance Tracing**: For each claim, trace back to specific source material
+4. **Confidence Assessment**: Rate each claim's grounding (high/medium/low/insufficient)
+5. **Gap Analysis**: Identify claims without source support
+6. **Report Generation**: Produce a validation summary with recommendations
+
+**Usage**: Type `/hallucination-check` followed by the text or context to validate. I will systematically analyze claims against available sources.
+
+**Example**:
+```
+/hallucination-check
+
+Review my previous response about Prometheus configuration for potential hallucinations.
+```
+
+**No Script Required**: This is a read-only analytical skill that operates through structured reasoning rather than shell script execution.
+
 ## When I Activate
+- `/hallucination-check` (slash command)
 - "Check for hallucinations"
 - "Validate this information"
 - "Is this accurate?"
 - "Verify against sources"
 - "Fact-check this claim"
 - "Did you hallucinate?"
+
+## Validation Workflow
+
+When `/hallucination-check` is invoked, I follow this structured process:
+
+### Step 1: Claim Extraction
+```markdown
+| # | Claim | Type | Specificity |
+|---|-------|------|-------------|
+| 1 | "Prometheus default scrape interval is 15s" | Technical config | High |
+| 2 | "AlertManager uses port 9093" | Network config | High |
+| 3 | "This is the recommended approach" | Opinion/guidance | Medium |
+```
+
+### Step 2: Source Mapping
+```markdown
+| # | Claim | Source | Location | Verification |
+|---|-------|--------|----------|--------------|
+| 1 | "Prometheus default..." | prometheus.yml | Line 23 | ✅ Direct quote |
+| 2 | "AlertManager uses..." | kube-prometheus docs | Section 3.2 | ✅ Confirmed |
+| 3 | "Recommended approach" | None found | - | ⚠️ Unverified |
+```
+
+### Step 3: Confidence Report
+```markdown
+## Validation Summary
+
+**High Confidence (2/3)**: Claims 1, 2 - directly traceable to sources
+**Medium Confidence (0/3)**: None
+**Low Confidence (1/3)**: Claim 3 - opinion without explicit source support
+
+### Recommendations
+- Claim 3 should be qualified as interpretation or removed
+- Consider citing specific documentation for recommendations
+```
 
 ## Core Philosophy
 

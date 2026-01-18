@@ -1,6 +1,6 @@
 ---
 name: ksm-crossplane-adapter
-description: 'Adapt kube-state-metrics configuration for monitoring non-Flux resources like Crossplane Managed Resources and Compositions beyond standard KStatus patterns'
+description: 'Adapt kube-state-metrics configuration for monitoring non-Flux resources like Crossplane Managed Resources and Compositions beyond standard KStatus patterns. Trigger with /ksm-crossplane'
 allowed-tools: ['read_file', 'grep_search', 'run_in_terminal', 'semantic_search', 'get_terminal_output']
 ---
 
@@ -8,12 +8,43 @@ allowed-tools: ['read_file', 'grep_search', 'run_in_terminal', 'semantic_search'
 
 I adapt kube-state-metrics configurations to enable monitoring of Crossplane Managed Resources and Compositions, extending beyond standard Flux patterns to handle Crossplane's unique Synced and Ready condition patterns.
 
+## Slash Command
+
+### `/ksm-crossplane`
+Runs the full Crossplane monitoring validation workflow:
+1. Verify Kubernetes cluster connectivity
+2. Check Crossplane installation and CRDs
+3. List installed Crossplane providers
+4. Verify kube-state-metrics is running
+5. Check KSM custom resource configuration
+6. Query Prometheus for Crossplane metrics
+7. Validate KStatus condition metrics exist
+8. Count active managed resources
+
+**Usage**: Type `/ksm-crossplane` to validate Crossplane monitoring configuration and metric collection.
+
+**Script Verification**: Before executing, verify the script integrity:
+```bash
+sha256sum .github/skills/ksm-crossplane-adapter/scripts/validate.sh
+# Expected: check current hash after creation
+```
+
+**Execute validation**:
+```bash
+bash .github/skills/ksm-crossplane-adapter/scripts/validate.sh
+```
+
 ## When I Activate
+- `/ksm-crossplane` (slash command)
 - "Adapt metrics for Crossplane"
 - "Configure kube-state-metrics for Crossplane"
 - "Monitor Crossplane resources"
 - "Set up Crossplane alerts"
 - "Extend KSM for custom resources"
+
+## Port-Forward Assumptions
+This skill assumes port-forwards are active or can be started:
+- **Prometheus**: `kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090 &`
 
 ## Crossplane vs Standard Kubernetes Patterns
 

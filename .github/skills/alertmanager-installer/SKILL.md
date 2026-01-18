@@ -1,6 +1,6 @@
 ---
 name: alertmanager-installer
-description: 'Install and configure AlertManager following monitoring guide patterns and best practices for Kubernetes environments'
+description: 'Install and configure AlertManager following monitoring guide patterns and best practices for Kubernetes environments. Trigger with /alertmanager-install'
 allowed-tools: ['read_file', 'create_file', 'replace_string_in_file', 'run_in_terminal', 'semantic_search']
 ---
 
@@ -8,12 +8,43 @@ allowed-tools: ['read_file', 'create_file', 'replace_string_in_file', 'run_in_te
 
 I install and configure AlertManager using monitoring patterns and best practices for Kubernetes environments.
 
+## Slash Command
+
+### `/alertmanager-install`
+Runs the full prerequisite validation and installation readiness workflow:
+1. Verify Kubernetes cluster connectivity
+2. Check monitoring namespace exists
+3. Validate RBAC permissions for AlertManager CRDs
+4. Confirm Prometheus Operator is installed
+5. Check existing Prometheus and AlertManager pods
+6. Test AlertManager API health (if running)
+7. Verify Prometheus → AlertManager connectivity
+
+**Usage**: Type `/alertmanager-install` to validate prerequisites before installation or check existing installation health.
+
+**Script Verification**: Before executing, verify the script integrity:
+```bash
+sha256sum .github/skills/alertmanager-installer/scripts/validate.sh
+# Expected: check current hash after creation
+```
+
+**Execute validation**:
+```bash
+bash .github/skills/alertmanager-installer/scripts/validate.sh
+```
+
 ## When I Activate
+- `/alertmanager-install` (slash command)
 - "Install AlertManager"
 - "Set up monitoring stack"
 - "Configure Flux alerting"
 - "Deploy AlertManager with Flux"
 - "Monitoring guide setup"
+
+## Port-Forward Assumptions
+This skill assumes port-forwards are active or can be started:
+- **Prometheus**: `kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090 &`
+- **AlertManager**: `kubectl port-forward -n monitoring svc/kube-prometheus-stack-alertmanager 9093:9093 &`
 
 ## Monitoring Guide Knowledge
 

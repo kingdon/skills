@@ -109,13 +109,18 @@ I install and configure AlertManager using monitoring patterns and best practice
 
 ### During Skill Creation
 - [ ] YAML frontmatter starts on line 1
-- [ ] Description includes natural trigger phrases
+- [ ] Description includes natural trigger phrases AND slash command
 - [ ] Core purpose stated in 2-3 sentences
+- [ ] **Slash command section with workflow steps**
+- [ ] **Validation script in scripts/validate.sh (if runtime skill)**
 - [ ] Embedded examples demonstrate key patterns
 - [ ] Activation criteria clearly defined
 
 ### After Skill Creation
 - [ ] Test activation with natural language triggers
+- [ ] **Test slash command triggers autonomous execution**
+- [ ] **Run validation script and confirm it passes**
+- [ ] **Generate and document SHA256 checksum for scripts**
 - [ ] Verify tool restrictions work as intended
 - [ ] Confirm orthogonality with existing skills
 - [ ] Document any supporting files needed
@@ -127,6 +132,102 @@ When SKILL.md exceeds 500 lines, use:
 - `examples.md` - Extended code examples and use cases
 - `scripts/` - Automation scripts and utilities
 - `templates/` - Reusable configuration templates
+
+## Slash Command Pattern (Required)
+
+Every skill MUST include a slash command for autonomous execution. This enables users to trigger the skill's core functionality with a single command.
+
+### Slash Command Structure
+```markdown
+## Slash Command
+
+### `/skill-action`
+Runs the full autonomous workflow:
+1. Step one description
+2. Step two description
+3. Step three description
+
+**Usage**: Type `/skill-action` and I will execute the validation/workflow automatically.
+
+**Script Verification**: Before executing, verify the script integrity:
+\`\`\`bash
+sha256sum .github/skills/skill-name/scripts/validate.sh
+# Expected: <sha256-hash>
+\`\`\`
+
+**Execute validation**:
+\`\`\`bash
+bash .github/skills/skill-name/scripts/validate.sh
+\`\`\`
+```
+
+### Validation Script Pattern
+For skills with runtime validation, create `scripts/validate.sh`:
+
+```bash
+#!/bin/bash
+
+###########################################
+# Part of Kingdon Skills - skill-name
+###########################################
+# Brief description of what this script validates
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo "=== Skill Name Validation ==="
+echo ""
+
+# Step 1: Check prerequisites
+echo "Step 1: Checking prerequisites..."
+# ... validation logic ...
+echo -e "${GREEN}✓ Prerequisites met${NC}"
+
+# Step N: Final checks
+echo ""
+echo "=== Summary ==="
+echo -e "${GREEN}✓ Validation passed${NC}"
+exit 0
+```
+
+### Script Integrity Verification
+Following TDG patterns, scripts should be verified before execution:
+
+1. **Generate checksum** after creating/updating script:
+   ```bash
+   sha256sum .github/skills/skill-name/scripts/validate.sh
+   ```
+
+2. **Document expected checksum** in SKILL.md
+
+3. **Verify before execution** (optional but recommended for critical scripts)
+
+### Slash Command Naming Conventions
+- Use lowercase with hyphens: `/prometheus-status`, `/template-generate`
+- Be action-oriented: `/check-X`, `/install-X`, `/generate-X`
+- Match the skill's primary purpose
+- Include in description for discoverability: `"... Trigger with /slash-command"`
+
+### Skills Without Runtime Scripts
+Read-only analytical skills (like hallucination-detector) may not need shell scripts.
+Instead, document a structured workflow that Claude follows:
+
+```markdown
+## Slash Command
+
+### `/hallucination-check`
+Runs a structured validation workflow:
+1. **Claim Extraction**: Identify factual assertions
+2. **Source Mapping**: Trace claims to sources
+3. **Confidence Report**: Rate grounding quality
+
+**No Script Required**: This skill uses structured reasoning rather than shell execution.
+```
 
 ## String Substitutions Available
 - `$ARGUMENTS` - User's request arguments
