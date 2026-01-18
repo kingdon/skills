@@ -39,6 +39,8 @@ spec:
     #   enabled: false
     prometheus:
       prometheusSpec:
+        externalUrl: http://localhost:9090
+        routePrefix: /
         retention: 24h
         resources:
           requests:
