@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    release: kube-prometheus-stack
+  name: flux-gitops-alertmanager.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: GitOpsToolkit
+    rules:
+      - alert: ReconciliationFailure
+        expr: max(gotk_resource_info{ready="False"}) by (exported_namespace, name, customresource_kind) == 1
+        for: 20m
+        labels:
+          severity: page
+        annotations:
+          summary: '{{ $labels.customresource_kind }} {{ $labels.exported_namespace }}/{{ $labels.name }} reconciliation has been failing for more than twenty minutes.'
+      - alert: ReconciliationSuspended
+        expr: max by (exported_namespace, name, customresource_kind) (gotk_resource_info{suspended="true"}) == 1
+        for: 10m
+        labels:
+          severity: page
+        annotations:
+          summary: '{{ $labels.customresource_kind }} {{ $labels.exported_namespace }}/{{ $labels.name }} reconciliation has been suspended for more than ten minutes.'

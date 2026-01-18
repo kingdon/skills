@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    release: kube-prometheus-stack
+  name: flux-user-alertmanager.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: CrossplaneUserResource
+    rules:
+      - alert: UserResourceNotReady
+        expr: max(user_resource_info{ready="False"}) by (exported_namespace, name, customresource_kind, customresource_group) == 1
+        for: 25m
+        labels:
+          severity: page
+        annotations:
+          summary: 'Not Ready: {{ $labels.customresource_group }} {{ $labels.customresource_kind }}/{{ $labels.name }} in namespace ({{ $labels.exported_namespace }}) User resource has failed its readiness check.'
+      - alert: UserResourceSyncFailed
+        expr: max by (exported_namespace, name, customresource_kind, customresource_group) (user_resource_info{synced="False"}) == 1
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: 'Not Synced: {{ $labels.customresource_group }} {{ $labels.customresource_kind }}/{{ $labels.name }} in namespace ({{ $labels.exported_namespace }}) crossplane syncing for this User resource is failing.'

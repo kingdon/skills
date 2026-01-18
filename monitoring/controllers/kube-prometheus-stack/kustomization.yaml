@@ -13,5 +13,12 @@ configMapGenerator:
       labels:
         app.kubernetes.io/part-of: flux
         app.kubernetes.io/component: monitoring
+  - name: alert-manager-config
+    files:
+      - alert-manager-config.yaml
+    options:
+      labels:
+        app.kubernetes.io/part-of: flux
+        app.kubernetes.io/component: monitoring
 configurations:
   - kustomizeconfig.yaml
