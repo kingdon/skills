@@ -29,6 +29,10 @@ spec:
   - kind: ConfigMap
     name: alert-manager-config
     valuesKey: alert-manager-config.yaml
+  - kind: Secret
+    name: user-slack
+    valuesKey: address
+    targetPath: alertmanager.config.global.slack_api_url
   # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
   values:
     # alertmanager:
