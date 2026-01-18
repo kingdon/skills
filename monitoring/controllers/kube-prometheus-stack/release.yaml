@@ -39,6 +39,8 @@ spec:
     #   enabled: false
     prometheus:
       prometheusSpec:
+        externalUrl: http://localhost:9090
+        routePrefix: /
         retention: 24h
         resources:
           requests:
@@ -48,6 +50,14 @@ spec:
         podMonitorSelector:
           matchLabels:
             app.kubernetes.io/component: monitoring
+    defaultRules:
+      rules:
+        kubeControllerManager: false
+        kubeProxy: false
+        kubeSchedulerAlerting: false
+        kubelet: false
+        kubernetesSystem: false
     grafana:
-      defaultDashboardsEnabled: false
+      enabled: false
+      defaultDashboardsEnabled: true
       adminPassword: flux

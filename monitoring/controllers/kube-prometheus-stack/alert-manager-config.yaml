@@ -5,6 +5,8 @@ alertmanager:
       memory: 400Mi
       cpu: 200m
   alertmanagerSpec:
+    externalUrl: http://localhost:9093
+    routePrefix: /
     resources:
       limits:
         memory: 400Mi
