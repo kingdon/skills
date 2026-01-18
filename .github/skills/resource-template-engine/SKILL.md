@@ -1,6 +1,6 @@
 ---
 name: resource-template-engine
-description: 'Operate the templating system for onboarding new Crossplane resource types with automated metric configuration and alert rule generation'
+description: 'Operate the templating system for onboarding new Crossplane resource types with automated metric configuration and alert rule generation. Trigger with /template-generate'
 allowed-tools: ['read_file', 'create_file', 'replace_string_in_file', 'run_in_terminal', 'semantic_search']
 ---
 
@@ -8,12 +8,43 @@ allowed-tools: ['read_file', 'create_file', 'replace_string_in_file', 'run_in_te
 
 I operate the automated templating system that onboards new Crossplane resource types by generating kube-state-metrics configurations and alert rules based on superficial resource knowledge and pattern matching.
 
+## Slash Command
+
+### `/template-generate`
+Runs the full resource discovery and template generation workflow:
+1. Verify Kubernetes cluster connectivity
+2. Check Crossplane installation
+3. Discover and categorize Crossplane resource types (database, network, compute, storage)
+4. Check existing KSM configurations
+5. Check existing PrometheusRules for Crossplane
+6. Identify resources needing metric templates
+7. Validate template directory structure
+8. Generate recommendations for new templates
+
+**Usage**: Type `/template-generate` to discover Crossplane resources and identify which need metric configurations.
+
+**Script Verification**: Before executing, verify the script integrity:
+```bash
+sha256sum .github/skills/resource-template-engine/scripts/validate.sh
+# Expected: check current hash after creation
+```
+
+**Execute validation**:
+```bash
+bash .github/skills/resource-template-engine/scripts/validate.sh
+```
+
 ## When I Activate
+- `/template-generate` (slash command)
 - "Onboard new resource type"
 - "Generate metrics for provider"
 - "Add monitoring for Crossplane resource"
 - "Template new alerts"
 - "Automate resource monitoring"
+
+## Port-Forward Assumptions
+This skill assumes port-forwards are active or can be started:
+- **Prometheus**: `kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090 &`
 
 ## Template System Architecture
 
