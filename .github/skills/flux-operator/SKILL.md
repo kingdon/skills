@@ -1,12 +1,14 @@
 ---
 name: flux-operator
-description: 'Install and validate Flux Operator installations, check GitOps connectivity, access the Flux UI status page, and configure MCP server integration. Trigger with /flux-status'
+description: 'Validate Flux Operator installations, debug GitOps connectivity issues, access the Flux UI, and configure MCP server for safe production cluster debugging. Trigger with /flux-status'
 allowed-tools: ['read_file', 'run_in_terminal', 'grep_search', 'semantic_search', 'get_terminal_output', 'fetch_webpage']
 ---
 
 # Flux Operator Expert
 
-I install, validate, and troubleshoot Flux Operator installations. I understand GitOps connectivity, FluxInstance configuration, component health, and can help you access the Flux UI and configure the MCP Server for AI-powered GitOps.
+I validate and troubleshoot Flux Operator installations. I understand GitOps connectivity, FluxInstance configuration, component health, and can help you access the Flux UI and configure the MCP Server for AI-powered GitOps debugging.
+
+**Enterprise Safety**: This skill is designed for production environments. MCP server configurations default to read-only mode, aligning with GitOps principles where all changes flow through Git.
 
 ## Slash Command
 
@@ -246,39 +248,40 @@ Open http://localhost:9080 in your browser.
 
 ## MCP Server Setup
 
-The Flux MCP Server enables AI assistants to interact with Kubernetes clusters for GitOps operations.
+The Flux MCP Server enables AI assistants to query Kubernetes clusters for GitOps debugging and access Flux documentation. This is primarily a **debugging and documentation tool** - it gives you faster access to cluster state and the Flux docs without leaving your editor.
 
 ### Install MCP Server
 ```bash
 brew install controlplaneio-fluxcd/tap/flux-operator-mcp
 ```
 
-### Configure for VS Code Copilot
-Add to VS Code settings:
+### Configure for VS Code Copilot (Recommended: Read-Only)
+
+Open the MCP configuration with **"MCP: Open User Configuration"** from the command palette, then add:
+
 ```json
 {
-  "mcp": {
-    "servers": {
-      "flux-operator-mcp": {
-        "command": "/opt/homebrew/bin/flux-operator-mcp",
-        "args": ["serve"],
-        "env": {
-          "KUBECONFIG": "/Users/yourname/.kube/config"
-        }
+  "servers": {
+    "flux-operator-mcp": {
+      "command": "/opt/homebrew/bin/flux-operator-mcp",
+      "args": ["serve", "--read-only=true"],
+      "env": {
+        "KUBECONFIG": "/Users/yourname/.kube/config"
       }
     }
-  },
-  "chat.mcp.enabled": true
+  }
 }
 ```
 
-### Configure for Claude Desktop
+After saving, enable the server using the wrench-and-screwdriver icon in the Copilot Chat panel.
+
+### Configure for Claude Desktop (Read-Only)
 ```json
 {
   "mcpServers": {
     "flux-operator-mcp": {
       "command": "/opt/homebrew/bin/flux-operator-mcp",
-      "args": ["serve", "--read-only=false"],
+      "args": ["serve", "--read-only=true"],
       "env": {
         "KUBECONFIG": "/path/to/.kube/config"
       }
@@ -287,38 +290,69 @@ Add to VS Code settings:
 }
 ```
 
+### Why Read-Only Mode?
+
+**Read-only mode is the safe default for production clusters.** When `--read-only=true` is set:
+
+- The MCP server only advertises read-only tools
+- No reconciliation triggers, no suspend/resume actions
+- Safe to connect to production environments
+- Aligns with GitOps principles (changes go through Git, not ad-hoc commands)
+
+Enterprise users connecting to production clusters should start with read-only mode. You can always reconfigure for read-write access when you explicitly need it.
+
+### MCP Tools (Read-Only Mode)
+
+With `--read-only=true`, these tools are available:
+
+| Tool | Purpose |
+|------|--------|
+| `get_flux_instance` | Flux installation details and controller status |
+| `get_kubernetes_resources` | Query any K8s resource with status/events |
+| `get_kubernetes_logs` | Pod logs for troubleshooting |
+| `get_kubernetes_metrics` | CPU/Memory usage |
+| `get_kubeconfig_contexts` | List available cluster contexts |
+| `set_kubeconfig_context` | Switch between cluster contexts |
+| `search_flux_docs` | Query the latest Flux documentation |
+
+### MCP Tools (Read-Write Mode)
+
+For environments where you need to trigger reconciliations (dev/staging), use `--read-only=false`:
+
+```json
+"args": ["serve", "--read-only=false"]
+```
+
+This enables additional tools:
+
+| Tool | Purpose |
+|------|--------|
+| `reconcile_flux_kustomization` | Trigger Kustomization reconciliation |
+| `reconcile_flux_helmrelease` | Trigger HelmRelease sync |
+| `reconcile_flux_source` | Refresh Git/OCI sources |
+| `suspend_flux_reconciliation` | Pause resource reconciliation |
+| `resume_flux_reconciliation` | Resume paused resources |
+
+**Note**: Even in read-write mode, all changes are still bounded by your kubeconfig permissions. The MCP server cannot do anything your kubectl cannot do.
+
 ### MCP Security Features
-- Read-only mode available (`--read-only=true`)
-- Masks sensitive Secret values
-- Uses existing kubeconfig permissions
-- Supports Kubernetes impersonation
-
-### MCP Tools Available
-Once configured, the MCP server provides:
-
-**Reporting**:
-- `get_flux_instance` - Flux installation details
-- `get_kubernetes_resources` - Any K8s resource with status/events
-- `get_kubernetes_logs` - Pod logs for troubleshooting
-- `get_kubernetes_metrics` - CPU/Memory usage
-
-**Actions**:
-- `reconcile_flux_kustomization` - Trigger reconciliation
-- `reconcile_flux_helmrelease` - Trigger Helm sync
-- `reconcile_flux_source` - Refresh Git/OCI sources
-- `suspend_flux_reconciliation` - Pause resources
-- `resume_flux_reconciliation` - Resume paused resources
-
-**Documentation**:
-- `search_flux_docs` - Query latest Flux documentation
+- **Read-only mode is the default in Flux** - safe for production
+- Masks sensitive Secret values automatically
+- Uses existing kubeconfig permissions (no privilege escalation)
+- Supports Kubernetes impersonation for RBAC testing
 
 ### Example MCP Prompts
-After MCP is configured:
+
+**Debugging (read-only)**:
 - "Analyze the Flux installation in my cluster and report status of all components"
 - "Are there any reconciliation errors in Flux-managed resources?"
-- "Reconcile the flux-system kustomization with its source"
 - "What deployments have been updated today based on Flux events?"
-- "Draw a diagram of the Flux dependency flow"
+- "Show me the logs from the source-controller"
+- "Search the Flux docs for how to configure SOPS decryption"
+
+**Operations (read-write mode only)**:
+- "Reconcile the flux-system kustomization with its source"
+- "Suspend reconciliation for the staging HelmRelease while I debug"
 
 ## Troubleshooting Guide
 
@@ -401,5 +435,5 @@ kubectl get events -n flux-system
 
 # Version info
 flux-operator version
-kubectl get fluxinstance flux -n flux-system -o jsonpath='{.status.revision}'
+kubectl get fluxinstance flux -n flux-system -o jsonpath='{.status.conditions}'
 ```
