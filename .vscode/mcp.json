@@ -3,7 +3,8 @@
     "flux-operator-mcp": {
       "command": "/opt/homebrew/bin/flux-operator-mcp",
       "args": [
-        "serve"
+        "serve",
+        "--read-only"
       ],
       "env": {
         "KUBECONFIG": "/Users/yebyen/.kube/config"
