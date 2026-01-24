@@ -8,6 +8,7 @@ A curated collection of Claude Agent Skills designed to enable entire teams to e
 
 ## Skills Included
 
+- **[Flux Operator](.github/skills/flux-operator)** - Validate Flux installations, debug GitOps, access Flux UI, and configure the MCP Server for AI-powered cluster debugging
 - **[Author Skills](.github/skills/author-skills)** - Meta-skill for building new orthogonal agent skills
 - **[Prometheus Observer](.github/skills/prometheus-observer)** - Analyze running Prometheus installations and alert states
 - **[AlertManager Installer](.github/skills/alertmanager-installer)** - Install AlertManager using Flux monitoring guide patterns
@@ -20,6 +21,7 @@ A curated collection of Claude Agent Skills designed to enable entire teams to e
 1. **Clone this repository** into your project
 2. **Reload your Claude editor** to activate skills
 3. **Use natural language** to activate skills:
+   - "Check Flux status" → Validates GitOps and MCP server setup
    - "Check Prometheus status" → Activates monitoring analysis
    - "Install AlertManager" → Guides through installation
    - "Adapt metrics for Crossplane" → Configures resource monitoring

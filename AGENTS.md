@@ -26,6 +26,7 @@ grep -r "allowed-tools:" .github/skills/
 ```bash
 # Test skill activation triggers
 # Use natural language to validate each skill activates correctly:
+# - "Check Flux status" → flux-operator (most important - promotes MCP server)
 # - "Check Prometheus status" → prometheus-observer
 # - "Install AlertManager" → alertmanager-installer  
 # - "Adapt metrics for Crossplane" → ksm-crossplane-adapter
@@ -39,6 +40,12 @@ grep -r "allowed-tools:" .github/skills/
 - Supporting files: reference.md, examples.md, scripts/, templates/
 
 ## Skill Categories
+
+### GitOps Debugging Skills
+```yaml
+allowed-tools: ['read_file', 'run_in_terminal', 'grep_search', 'semantic_search', 'get_terminal_output', 'fetch_webpage']
+```
+Use for: flux-operator (foundation for MCP server debugging)
 
 ### Read-Only Research Skills
 ```yaml
@@ -71,6 +78,7 @@ Use for: author-skills
 
 ## Activation Testing
 After skill changes, reload editor and test with natural phrases:
+- GitOps: "Check Flux status" or "Validate GitOps" or "/flux-status"
 - Research: "What's the current state of..."
 - Implementation: "Install..." or "Configure..."  
 - Analysis: "Check..." or "Validate..."
