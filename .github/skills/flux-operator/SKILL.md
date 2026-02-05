@@ -109,175 +109,24 @@ The Flux UI provides:
 
 ## Core Capabilities
 
-### 1. FluxInstance Status Validation
-Check the primary FluxInstance resource for Ready condition:
+For quick health checks and validation, see the essential commands below. For detailed reference on all Flux resources and commands, see [reference.md](reference.md).
 
+### Quick Status Checks
 ```bash
 # Get FluxInstance with status
 kubectl get fluxinstance -A
 
-# Detailed status with conditions
-kubectl get fluxinstance flux -n flux-system -o jsonpath='{.status.conditions}' | jq .
-```
-
-**Expected Ready Condition**:
-```json
-{
-  "type": "Ready",
-  "status": "True",
-  "reason": "ReconciliationSucceeded",
-  "message": "Reconciliation finished in 1s"
-}
-```
-
-**Failure Indicators**:
-- `status: "False"` - Something is broken
-- `reason: "ReconciliationFailed"` - Check message for details
-- Missing revision info - Sync not completing
-
-### 2. Component Health Verification
-```bash
 # All Flux pods should be Running
 kubectl get pods -n flux-system
 
-# Expected components:
-# - flux-operator-*
-# - source-controller-*
-# - kustomize-controller-*
-# - helm-controller-*
-# - notification-controller-*
-```
-
-### 3. GitRepository Sync Status
-```bash
-# Check sync status
+# Check GitRepository sync status
 kubectl get gitrepository -n flux-system
 
-# Detailed with revision
-kubectl get gitrepository flux-system -n flux-system -o jsonpath='{.status.conditions[?(@.type=="Ready")]}'
-```
-
-**Healthy Output**:
-```
-READY   STATUS
-True    stored artifact for revision 'refs/heads/main@sha1:abc123...'
-```
-
-### 4. Kustomization Reconciliation
-```bash
 # All kustomizations status
 kubectl get kustomization -n flux-system
-
-# Check specific kustomization conditions
-kubectl get kustomization flux-system -n flux-system \
-  -o jsonpath='{range .status.conditions[*]}{.type}{"\t"}{.status}{"\t"}{.message}{"\n"}{end}'
 ```
 
-## Kubernetes Object Ready Conditions
-
-Flux resources follow the KStatus pattern. Key conditions to check:
-
-| Condition | Meaning |
-|-----------|---------|
-| `Ready` | Resource has successfully reconciled |
-| `Stalled` | Reconciliation cannot make progress |
-| `Reconciling` | Actively processing changes |
-
-### Checking Any Flux Object
-```bash
-# Generic pattern for any Flux resource
-kubectl get <kind> <name> -n <namespace> \
-  -o jsonpath='{.status.conditions}' | jq '.[] | {type, status, message, reason}'
-```
-
-### Common Status Messages
-- **"Applied revision: refs/heads/main@sha1:..."** - Success, synced to this commit
-- **"Dependency 'flux-system/flux-system' is not ready"** - Waiting for dependency
-- **"Source not found"** - GitRepository missing or not synced
-- **"kustomize build failed"** - Invalid manifests in repository
-
-## Installation Guide
-
-### Prerequisites
-- Kubernetes cluster (1.28+)
-- kubectl configured with cluster access
-- Homebrew (for CLI installation on macOS/Linux)
-
-### Install Flux Operator CLI
-```bash
-brew install controlplaneio-fluxcd/tap/flux-operator
-```
-
-### Deploy Flux Operator and Instance
-```yaml
-# flux-instance.yaml
-apiVersion: fluxcd.controlplane.io/v1
-kind: FluxInstance
-metadata:
-  name: flux
-  namespace: flux-system
-spec:
-  distribution:
-    version: "2.x"
-    registry: "ghcr.io/fluxcd"
-    artifact: "oci://ghcr.io/controlplaneio-fluxcd/flux-operator-manifests"
-  components:
-    - source-controller
-    - source-watcher
-    - kustomize-controller
-    - helm-controller
-    - notification-controller
-  cluster:
-    type: kubernetes
-    size: medium
-    multitenant: false
-    networkPolicy: true
-    domain: "cluster.local"
-```
-
-Apply with:
-```bash
-flux-operator install -f flux-instance.yaml
-```
-
-### Configure Git Sync
-```yaml
-spec:
-  sync:
-    kind: GitRepository
-    url: "ssh://git@github.com/org/repo.git"
-    ref: "refs/heads/main"
-    path: "clusters/my-cluster"
-    pullSecret: "flux-system"
-```
-
-### Create Git Credentials
-```bash
-flux-operator create secret basic-auth flux-system \
-  --namespace=flux-system \
-  --username=git \
-  --password=$GITHUB_TOKEN
-```
-
-## Flux UI Status Page
-
-The Flux Operator includes a built-in web UI at port 9080.
-
-### Access via Port-Forward
-```bash
-kubectl -n flux-system port-forward svc/flux-operator 9080:9080 &
-```
-
-Open http://localhost:9080 in your browser.
-
-### Features
-- **Cluster Dashboard**: Overview of all Flux components and their health
-- **Kustomization Dashboard**: Detailed view of each Kustomization
-- **HelmRelease Dashboard**: Helm chart deployments and revisions
-- **Workloads Overview**: All managed Kubernetes workloads
-- **GitOps Graph**: Visual dependency mapping
-- **Reconciliation History**: Track changes over time
-- **Advanced Search**: Find resources across namespaces
+**For detailed debugging commands and status interpretation**, see [Core Capabilities in reference.md](reference.md#core-capabilities).
 
 ## MCP Server Setup (Step 10: Jump Here for Complex Issues)
 
@@ -334,54 +183,32 @@ After saving, enable the server using the wrench-and-screwdriver icon in the Cop
 - Safe to connect to production environments
 - Aligns with GitOps principles (changes go through Git, not ad-hoc commands)
 
-**Important**: Read-only mode restricts the MCP server's tools, not your local Git workflow. You can still:
-- Edit files in your local repository clone
-- Commit changes locally
-- Push to Git (which triggers GitOps reconciliation)
+**Important clarifications**:
 
-This is the **correct GitOps workflow** - all infrastructure changes flow through version control. Read-only mode simply prevents ad-hoc `kubectl` commands that bypass your Git history.
+1. **Local Git workflow is unaffected**: You can still edit files, commit changes, and push to Git (proper GitOps workflow)
+
+2. **Direct kubectl calls still work**: Read-only mode doesn't prevent your LLM from making direct `kubectl` calls. It only affects which tools the MCP server promotes. If you need to run a kubectl command directly, the LLM can still do that - read-only mode just ensures the MCP server itself follows GitOps principles.
+
+This is the **correct GitOps workflow** - all infrastructure changes flow through version control. Read-only mode simply prevents the MCP server from promoting ad-hoc reconciliation commands that bypass your Git history.
 
 Enterprise users connecting to production clusters should start with read-only mode. You can always reconfigure for read-write access when you explicitly need it for development/staging environments.
 
-### MCP Tools (Read-Only Mode)
+### MCP Tools Overview
 
-With `--read-only=true`, these tools are available:
+The MCP server provides different tool sets based on mode:
+- **Read-only mode** (`--read-only=true`): Query cluster state, get logs, search Flux docs
+- **Read-write mode** (`--read-only=false`): Add reconciliation triggers, suspend/resume
 
-| Tool | Purpose |
-|------|--------|
-| `get_flux_instance` | Flux installation details and controller status |
-| `get_kubernetes_resources` | Query any K8s resource with status/events |
-| `get_kubernetes_logs` | Pod logs for troubleshooting |
-| `get_kubernetes_metrics` | CPU/Memory usage |
-| `get_kubeconfig_contexts` | List available cluster contexts |
-| `set_kubeconfig_context` | Switch between cluster contexts |
-| `search_flux_docs` | Query the latest Flux documentation |
-
-### MCP Tools (Read-Write Mode)
-
-For development/staging environments where you need to trigger reconciliations, use `--read-only=false`:
-
-```json
-"args": ["serve", "--read-only=false"]
-```
-
-This enables additional tools:
-
-| Tool | Purpose |
-|------|--------|
-| `reconcile_flux_kustomization` | Trigger Kustomization reconciliation |
-| `reconcile_flux_helmrelease` | Trigger HelmRelease sync |
-| `reconcile_flux_source` | Refresh Git/OCI sources |
-| `suspend_flux_reconciliation` | Pause resource reconciliation |
-| `resume_flux_reconciliation` | Resume paused resources |
-
-**Note**: Even in read-write mode, all changes are still bounded by your kubeconfig permissions. The MCP server cannot do anything your kubectl cannot do.
+For complete tool listings and capabilities, see [MCP Tools Reference in reference.md](reference.md#mcp-tools-reference).
 
 ### Before You Reconcile Manually
 
 **GitOps is event-driven, not interval-based.** If you find yourself manually reconciling frequently, consider these alternatives:
 
-#### 1. Set Up Flux Receivers (Recommended)
+#### 1. Set Up Flux Receivers (Recommended for All Environments)
+
+**Every Git repository should have a Receiver.** Whether you're in development, staging, or production, Receivers provide instant feedback without waiting or calling `flux reconcile`.
+
 Flux Receivers enable instant GitOps feedback via webhooks:
 
 ```yaml
@@ -408,10 +235,14 @@ Configure the webhook in your Git provider to point to the Receiver endpoint. Ch
 **Benefits**:
 - True continuous deployment (not interval-based polling)
 - Minimal attack surface (webhook validates token)
-- Works in production environments
+- Works in all environments (dev, staging, production)
 - Feels responsive and automatic
+- Eliminates the need to manually reconcile
+
+**Where do you do your work?** Set up a Receiver there so you aren't waiting or calling `flux reconcile`. Most clusters only have 1-2 Git repositories, making Receiver setup straightforward.
 
 #### 2. Automatic Kustomization Updates
+
 When a GitRepository updates to a new revision, **Kustomizations automatically reconcile**. You don't need to trigger them manually:
 
 ```yaml
@@ -426,8 +257,9 @@ spec:
   # Reconciles automatically when flux-system GitRepository updates
 ```
 
-#### 3. Increase Reconciliation Intervals
-For production environments without Receivers, set longer intervals (10m+):
+#### 3. Reconciliation Interval Guidelines
+
+Set longer intervals (10m+) to reduce API server load and prevent reconciliation storms:
 
 ```yaml
 spec:
@@ -437,8 +269,11 @@ spec:
 **Why longer intervals?**
 - Reduces API server load at scale
 - Prevents reconciliation storms in multi-tenant clusters
-- Forces adoption of event-driven patterns (Receivers)
 - Still provides reasonable drift detection
+
+**This is orthogonal to Receivers**: Use long intervals for polling AND set up Receivers for instant feedback. They serve different purposes:
+- **Receivers**: Instant notification when source changes (event-driven)
+- **Intervals**: Periodic drift detection and recovery (time-based)
 
 **When to actually reconcile manually**:
 - Testing a new Flux setup for the first time
@@ -446,9 +281,9 @@ spec:
 - One-off validation after configuration changes
 
 If your workflow requires frequent manual reconciliation, that's a signal to:
-1. Set up Receivers for instant feedback
+1. Set up Receivers for instant feedback (most important)
 2. Verify your Kustomizations are watching the right sources
-3. Check if your intervals are too aggressive
+3. Review if your intervals need adjustment
 
 The goal is **continuous reconciliation through automation**, not manual intervention to save 10 seconds.
 
@@ -475,68 +310,20 @@ The goal is **continuous reconciliation through automation**, not manual interve
 
 **For complex issues**: Consider setting up the MCP Server (Step 10) first - it provides comprehensive cluster visibility that makes diagnosis much faster.
 
-### FluxInstance Not Ready
-```bash
-# Check operator logs
-kubectl logs -n flux-system deployment/flux-operator
+### Quick Troubleshooting Steps
+1. Check FluxInstance status: `kubectl get fluxinstance -A`
+2. Check pod health: `kubectl get pods -n flux-system`
+3. Check recent events: `kubectl get events -n flux-system --sort-by='.lastTimestamp' | tail -20`
 
-# Check FluxInstance events
-kubectl describe fluxinstance flux -n flux-system
-```
+**For detailed troubleshooting procedures**, see [Detailed Troubleshooting in reference.md](reference.md#detailed-troubleshooting).
+
+Common issues:
+- **FluxInstance Not Ready** → Check operator logs and FluxInstance events
+- **GitRepository Not Syncing** → Verify credentials and source-controller logs  
+- **Kustomization Stuck** → Check if waiting on source update, review kustomize-controller logs
+- **HelmRelease Failing** → Review helm-controller logs
 
 **If not immediately obvious** → Suggest MCP Server setup for deeper investigation.
-
-### GitRepository Not Syncing
-```bash
-# Check source-controller logs
-kubectl logs -n flux-system deployment/source-controller
-
-# Verify Git credentials
-kubectl get secret flux-system -n flux-system -o yaml
-
-# Check SSH key format
-kubectl get secret flux-system -n flux-system -o jsonpath='{.data.identity}' | base64 -d
-```
-
-**If credentials look correct but still failing** → MCP Server can help diagnose connectivity issues more effectively.
-
-### Kustomization Stuck
-```bash
-# Check kustomize-controller logs
-kubectl logs -n flux-system deployment/kustomize-controller --tail=50
-
-# Check if waiting on source update
-kubectl get gitrepository -n flux-system
-
-# Force reconciliation (only if necessary - see "Before You Reconcile Manually")
-kubectl annotate kustomization flux-system -n flux-system \
-  reconcile.fluxcd.io/requestedAt="$(date +%s)" --overwrite
-```
-
-**Note**: If you're manually reconciling frequently, consider setting up Flux Receivers (see MCP Tools section) for instant feedback instead of interval-based polling.
-
-### HelmRelease Failing
-```bash
-# Check helm-controller logs
-kubectl logs -n flux-system deployment/helm-controller --tail=50
-
-# Get HelmRelease status
-kubectl get helmrelease -A -o custom-columns=\
-NAME:.metadata.name,READY:.status.conditions[0].status,MESSAGE:.status.conditions[0].message
-```
-
-## Quick Health Check Commands
-
-```bash
-# One-liner: All Flux resources health
-kubectl get fluxinstance,gitrepository,kustomization,helmrelease -A
-
-# Check for NOT Ready resources
-kubectl get kustomization -A -o jsonpath='{range .items[?(@.status.conditions[0].status!="True")]}{.metadata.namespace}/{.metadata.name}: {.status.conditions[0].message}{"\n"}{end}'
-
-# Recent events for debugging
-kubectl get events -n flux-system --sort-by='.lastTimestamp' | tail -20
-```
 
 ## Integration Points
 
@@ -545,23 +332,8 @@ This skill provides GitOps status foundation for:
 - **AlertManager Installer** - Flux alerting configuration
 - **Resource Template Engine** - Flux-managed resource generation
 
-## Read-Only Commands Reference
+## Additional Resources
 
-Safe commands that only observe, never modify:
-
-```bash
-# Cluster status
-kubectl get fluxinstance -A
-kubectl get pods -n flux-system
-kubectl get gitrepository -A
-kubectl get kustomization -A
-kubectl get helmrelease -A
-
-# Detailed inspection
-kubectl describe fluxinstance flux -n flux-system
-kubectl get events -n flux-system
-
-# Version info
-flux-operator version
-kubectl get fluxinstance flux -n flux-system -o jsonpath='{.status.conditions}'
-```
+For comprehensive command references and detailed guides:
+- [reference.md](reference.md) - Full command reference, detailed troubleshooting, installation guide
+- [Flux Documentation](https://fluxcd.io/flux/) - Official Flux documentation
