@@ -1,9 +1,7 @@
-```skill
 ---
 name: sos-emergency
 description: 'Ship Operating System: Emergency Kubernetes cluster recovery, Talos reset procedures, Synology Container Manager recovery, and graceful shutdown protocols. Trigger with /sos'
 allowed-tools: ['read_file', 'run_in_terminal', 'grep_search', 'semantic_search', 'get_terminal_output', 'fetch_webpage', 'create_file']
-tags: ['sunkworks', 'live-stream', 'failure-tolerant']
 ---
 
 # Ship Operating System (SOS) - Emergency Recovery
@@ -337,9 +335,27 @@ fi
 5. Gradually bring up additional nodes
 6. Verify Flux sync before re-enabling reconciliation
 
+## MCP Server Integration
+
+**After initial recovery, the Flux Operator MCP Server accelerates verification:**
+
+### Post-Recovery Health Check
+Once cluster connectivity is restored, use MCP tools instead of manual kubectl:
+```
+MCP Tool: get_flux_instance
+→ Comprehensive Flux controller status and CRD health
+→ Faster than iterative /flux-status diagnosis
+
+MCP Tool: get_kubernetes_resources  
+→ Query all pods, check for CrashLoopBackOff across namespaces
+→ Identify remaining issues post-recovery
+```
+
+**Setup**: See flux-operator skill Step 10 for MCP server configuration.
+
 ## Integration Points
 
-- **Flux Operator**: Use `/flux-status` after recovery to verify GitOps health
+- **Flux Operator** → **Use MCP server** for comprehensive post-recovery verification
 - **Prometheus Observer**: Check `/prometheus-status` for alert state after cluster recovery
 - **Post-Mortem Author**: After recovery, use `/postmortem` to document what happened
 
@@ -374,4 +390,3 @@ This skill is designed for live-stream troubleshooting where:
 - Recovery time matters for audience engagement
 - Documentation happens in real-time
 - Iterative debugging is expected and embraced
-```
