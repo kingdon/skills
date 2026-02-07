@@ -2,7 +2,6 @@
 name: sos-emergency
 description: 'Ship Operating System: Emergency Kubernetes cluster recovery, Talos reset procedures, Synology Container Manager recovery, and graceful shutdown protocols. Trigger with /sos'
 allowed-tools: ['read_file', 'run_in_terminal', 'grep_search', 'semantic_search', 'get_terminal_output', 'fetch_webpage', 'create_file']
-tags: ['sunkworks', 'live-stream', 'failure-tolerant']
 ---
 
 # Ship Operating System (SOS) - Emergency Recovery

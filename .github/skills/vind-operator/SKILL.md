@@ -2,7 +2,6 @@
 name: vind-operator
 description: 'Validate Vind (lightweight Kubernetes) cluster creation, migrate from Kind to Vind, and perform cross-architecture testing for resource-constrained environments. Trigger with /vind-status'
 allowed-tools: ['read_file', 'run_in_terminal', 'grep_search', 'semantic_search', 'get_terminal_output', 'create_file']
-tags: ['sunkworks', 'live-stream', 'failure-tolerant']
 ---
 
 # Vind Operator Expert

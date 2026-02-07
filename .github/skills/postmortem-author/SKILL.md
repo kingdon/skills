@@ -2,7 +2,6 @@
 name: postmortem-author
 description: 'Generate Sunkworks-style post-mortem reports with timeline reconstruction, failure pattern recognition, honest technical assessments, and recovery playbooks. Trigger with /postmortem'
 allowed-tools: ['read_file', 'create_file', 'replace_string_in_file', 'run_in_terminal', 'grep_search', 'semantic_search', 'get_terminal_output']
-tags: ['sunkworks', 'live-stream', 'failure-tolerant']
 ---
 
 # Post-Mortem Author

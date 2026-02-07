@@ -2,7 +2,6 @@
 name: pihole-sync
 description: 'Validate dual-subnet Pi-Hole DNS topology, debug Gravity DB replication, test DNS failover, and generate Sunkworks episode notes documenting failures. Trigger with /pihole-status'
 allowed-tools: ['read_file', 'run_in_terminal', 'grep_search', 'semantic_search', 'get_terminal_output', 'create_file', 'fetch_webpage']
-tags: ['sunkworks', 'live-stream', 'failure-tolerant']
 ---
 
 # Pi-Hole Synchronization Expert
