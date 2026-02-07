@@ -1,4 +1,3 @@
-```skill
 ---
 name: sos-emergency
 description: 'Ship Operating System: Emergency Kubernetes cluster recovery, Talos reset procedures, Synology Container Manager recovery, and graceful shutdown protocols. Trigger with /sos'
@@ -374,4 +373,3 @@ This skill is designed for live-stream troubleshooting where:
 - Recovery time matters for audience engagement
 - Documentation happens in real-time
 - Iterative debugging is expected and embraced
-```

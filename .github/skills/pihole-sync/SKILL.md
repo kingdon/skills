@@ -1,4 +1,3 @@
-```skill
 ---
 name: pihole-sync
 description: 'Validate dual-subnet Pi-Hole DNS topology, debug Gravity DB replication, test DNS failover, and generate Sunkworks episode notes documenting failures. Trigger with /pihole-status'
@@ -442,4 +441,3 @@ add address=10.17.14.0/24 dns-server=10.17.14.10,10.17.13.10 gateway=10.17.14.1
 - Ask chat "what would you check first?" 
 - Share the Gravity Sync dashboard during troubleshooting
 - Show the query logs to demonstrate real-time blocking
-```

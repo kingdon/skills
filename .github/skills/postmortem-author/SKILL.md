@@ -1,4 +1,3 @@
-```skill
 ---
 name: postmortem-author
 description: 'Generate Sunkworks-style post-mortem reports with timeline reconstruction, failure pattern recognition, honest technical assessments, and recovery playbooks. Trigger with /postmortem'
@@ -357,4 +356,3 @@ During stream incidents, capture:
 - Chat suggestions that were tried
 - The moment of realization (for the highlight reel)
 - What the "fix" actually was vs. what chat thought it was
-```
