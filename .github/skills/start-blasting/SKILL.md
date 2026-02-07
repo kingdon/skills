@@ -1,14 +1,22 @@
 ---
-name: git-er-done
-description: 'Pragmatic task execution that chooses the fastest path: script it, LLM it, or just do it. For mundane tasks humans are slow at but LLMs blast through. Trigger with /git-er-done or "just do it"'
+name: start-blasting
+description: 'Pragmatic task execution that chooses the fastest path: script it, LLM it, or just do it. For mundane tasks humans are slow at but LLMs blast through. Trigger with /blast or /fast-path or "just do it"'
 allowed-tools: ['read_file', 'create_file', 'replace_string_in_file', 'run_in_terminal', 'semantic_search', 'grep_search', 'list_dir', 'get_terminal_output', 'fetch_webpage']
 ---
 
-# Git 'Er Done
+# Start Blasting 🔫
 
 **Pragmatic task execution for mundane, repetitive work that humans shouldn't spend brain cycles on.**
 
-The philosophy: Why script it if the LLM can just do it? Why use an LLM if a script works? But also - why build a script that won't work when the LLM can blast right past it?
+*"So anyway, I started blasting."* - The philosophy: Why script it if the LLM can just do it? Why use an LLM if a script works? But also - why build a script that won't work when the LLM can blast right past it?
+
+## Slash Commands
+
+### `/blast`
+Start executing a task pragmatically - choose fastest path to done.
+
+### `/fast-path`
+Alias for `/blast` - same functionality, SFW name.
 
 ## Core Principle
 
@@ -18,12 +26,14 @@ The philosophy: Why script it if the LLM can just do it? Why use an LLM if a scr
 2. **Is there a pattern worth capturing?** → Note it, but finish first
 3. **Will this recur often enough to script?** → Script it after proving the pattern
 4. **Is the script breaking?** → LLM brainpower bypasses broken tooling
+5. **Is there an MCP server for this?** → Use it (structured tool access beats parsing)
 
 **The trap to avoid**: Getting bogged down building automation for a one-time task, or manually grinding through something the LLM handles in seconds.
 
 ## When I Activate
 
-- "Just do it" / "git er done" / "blast through this"
+- `/blast` or `/fast-path` (slash commands)
+- "Just do it" / "start blasting" / "blast through this"
 - "Compare these and tell me what's different"
 - "Filter out the noise"
 - "Help me get through this tedious task"
@@ -41,6 +51,12 @@ The philosophy: Why script it if the LLM can just do it? Why use an LLM if a scr
               ┌───────────────┐
               │ Is it trivial │──Yes──▶ JUST DO IT
               │ (< 2 min)?    │         (no meta-work)
+              └───────┬───────┘
+                      │ No
+                      ▼
+              ┌───────────────┐
+              │ MCP server    │──Yes──▶ USE MCP TOOLS
+              │ available?    │         (structured > parsing)
               └───────┬───────┘
                       │ No
                       ▼
@@ -72,19 +88,22 @@ The philosophy: Why script it if the LLM can just do it? Why use an LLM if a scr
                  (one-time execution)
 ```
 
-## Slash Command
+## MCP Server Awareness
 
-### `/git-er-done`
+When available, prefer MCP servers over terminal commands:
 
-Execute a pragmatic task workflow:
+| Domain | MCP Server | Why Use It |
+|--------|-----------|------------|
+| Flux/GitOps | `flux-operator` | Structured status, safe read-only queries |
+| Kubernetes | MCP tools | Direct API access, no kubectl parsing |
+| GitHub | GitHub MCP | Structured PR/issue creation |
+| Databases | DB-specific MCP | Query without SQL injection risk |
 
-1. **Assess the task** - What needs doing? How repetitive?
-2. **Choose the path** - Script, LLM, or just do it
-3. **Execute rapidly** - No perfectionism, get to done
-4. **Surface decisions** - Flag anything needing human judgment
-5. **Summarize results** - Clear report of what changed
-
-**Usage**: Describe your tedious task and I'll blast through it efficiently.
+**MCP benefits**:
+- Structured responses (no parsing fragile CLI output)
+- Built-in safety boundaries
+- Consistent error handling
+- Tool-specific context
 
 ## Execution Patterns
 
@@ -138,6 +157,21 @@ for d in *\ copy; do echo "rm -r \"$d\""; done
 **LLM strength**: Read the full output, extract what matters, present decisions.
 
 **Example**: 500-line diff → "3 files identical (delete), 1 has meaningful changes (review), 2 copies have content original lacks (merge decision needed)"
+
+### Pattern 5: MCP-First Kubernetes
+
+**Scenario**: Need cluster state information.
+
+**With MCP** (preferred):
+```
+# Use flux-operator MCP tools
+get_kubernetes_resources(kind="Kustomization", namespace="flux-system")
+```
+
+**Without MCP** (fallback):
+```bash
+kubectl get kustomization -n flux-system -o json | jq '...'
+```
 
 ## The Human Handoff
 
@@ -193,6 +227,13 @@ Wrong: Do the task, forget the pattern existed
 Right: "This worked. Want me to author a skill for this pattern?"
 ```
 
+### ❌ Ignoring Available MCP
+Parsing CLI output when structured tools exist.
+```
+Wrong: kubectl get pods -o json | jq '.items[] | ...' (fragile parsing)
+Right: Use MCP kubernetes tools for structured access
+```
+
 ## When to Capture the Pattern
 
 After completing a task, ask:
@@ -217,6 +258,7 @@ This skill works alongside:
 - **Author Skills** - When a pattern is worth capturing
 - **Atomic Commit** - When changes need clean commits
 - **TDG** - When the task involves testable code
+- **Flux Operator** - MCP server for GitOps debugging
 
 ---
 

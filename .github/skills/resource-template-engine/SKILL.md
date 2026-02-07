@@ -405,9 +405,31 @@ data:
 ## Integration Points
 
 This skill orchestrates the complete monitoring onboarding process:
+- **Flux Operator** → Use MCP server for CRD discovery (see MCP Server Integration below)
 - **KSM Crossplane Adapter** - Provides pattern knowledge and templates
 - **Prometheus Observer** - Validates metrics are collected successfully  
 - **AlertManager Installer** - Ensures alerts have proper notification routing
 - **Author Skills** - Used when new resource categories require template expansion
 
 The engine operates autonomously but reports when manual intervention is needed for truly novel resource patterns.
+
+## MCP Server Integration
+
+**The Flux Operator MCP Server accelerates Crossplane resource discovery:**
+
+### Automated CRD Discovery
+Instead of manual `kubectl api-resources` queries, use the flux-operator MCP:
+```
+MCP Tool: get_kubernetes_api_versions
+→ Returns all CRDs with preferred apiVersion for each Kind
+→ Automatically identifies Crossplane provider resources
+```
+
+### Resource Status Queries
+```
+MCP Tool: get_kubernetes_resources
+→ Query: apiVersion=*.crossplane.io, kind=*
+→ Returns all Crossplane managed resources with status conditions
+```
+
+**Setup**: See flux-operator skill Step 10 for MCP server configuration.
