@@ -139,9 +139,33 @@ route:
 - Check for missing indices on high-cardinality metrics
 - Validate scrape interval vs evaluation interval
 
+## MCP Server Accelerators
+
+**Want faster, more comprehensive analysis?** These MCP servers provide deeper integration than manual API queries:
+
+### Flux Operator MCP (Recommended First)
+The **Flux Operator MCP Server** (`flux-operator`) provides Kubernetes resource access that complements Prometheus observation:
+- Use `get_kubernetes_resources` to query PrometheusRule and ServiceMonitor objects
+- Access pod logs for Prometheus/AlertManager directly
+- Combined with this skill's API queries, gives complete monitoring picture
+
+**Setup**: See flux-operator skill Step 10 for MCP server configuration.
+
+### Prometheus MCP Server
+For direct Prometheus API integration, consider:
+- **[prometheus-mcp-server](https://github.com/tjhop/prometheus-mcp-server/)** (Golang) - Full API support, STDIO/SSE/HTTP transports
+- **[prometheus-mcp-server](https://github.com/yanmxa/prometheus-mcp-server)** (TypeScript) - Natural language queries
+
+These provide tool-based access to the same APIs this skill uses manually.
+
+### Grafana MCP Server  
+If you're using Grafana for visualization:
+- **[mcp-grafana](https://github.com/grafana/mcp-grafana)** - Search dashboards, investigate incidents, query datasources
+
 ## Integration Points
 
 This skill provides the observational foundation for:
+- **Flux Operator** → Use MCP server for PrometheusRule resource access
 - **AlertManager Installer** - Understanding current state before changes
 - **KSM Crossplane Adapter** - Validating new metrics are collected
 - **Resource Template Engine** - Confirming new alerts activate properly

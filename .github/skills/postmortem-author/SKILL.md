@@ -1,9 +1,7 @@
-```skill
 ---
 name: postmortem-author
 description: 'Generate Sunkworks-style post-mortem reports with timeline reconstruction, failure pattern recognition, honest technical assessments, and recovery playbooks. Trigger with /postmortem'
 allowed-tools: ['read_file', 'create_file', 'replace_string_in_file', 'run_in_terminal', 'grep_search', 'semantic_search', 'get_terminal_output']
-tags: ['sunkworks', 'live-stream', 'failure-tolerant']
 ---
 
 # Post-Mortem Author
@@ -330,10 +328,35 @@ echo "## Related Incidents"
 echo "- [Incident Title](./incident-file.md)"
 ```
 
+## MCP Server Accelerators
+
+**Automate timeline collection with MCP servers** instead of manual kubectl/API queries:
+
+### Flux Operator MCP (Primary Recommendation)
+The **Flux Operator MCP Server** transforms timeline collection:
+- `get_kubernetes_resources` → Query events, pods, Kustomizations across namespaces
+- `get_kubernetes_logs` → Pull pod logs for the incident window
+- `search_flux_docs` → Reference Flux troubleshooting during analysis
+
+**Setup**: See flux-operator skill Step 10 for MCP server configuration.
+
+**Example workflow**:
+1. MCP: Get all events in last 4 hours
+2. MCP: Get Kustomization status changes
+3. MCP: Pull logs from failing pods
+4. Generate timeline automatically from MCP responses
+
+### Grafana + Loki MCP Servers
+For comprehensive observability data:
+- **[mcp-grafana](https://github.com/grafana/mcp-grafana)** - Search dashboards, investigate incidents, query datasources
+- **[loki-mcp](https://github.com/scottlepp/loki-mcp)** - Query logs directly from Loki
+
+These enable AI-assisted timeline reconstruction from your observability stack.
+
 ## Integration Points
 
+- **Flux Operator** → **Use MCP server** for automated event/log collection
 - **SOS Emergency**: Use after `/sos` recovery to document what happened
-- **Flux Operator**: Pull GitOps event history for timeline
 - **Prometheus Observer**: Include alert firing/resolution times
 
 ## Episode Time Estimates
@@ -357,4 +380,3 @@ During stream incidents, capture:
 - Chat suggestions that were tried
 - The moment of realization (for the highlight reel)
 - What the "fix" actually was vs. what chat thought it was
-```

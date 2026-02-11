@@ -1,9 +1,7 @@
-```skill
 ---
 name: vind-operator
 description: 'Validate Vind (lightweight Kubernetes) cluster creation, migrate from Kind to Vind, and perform cross-architecture testing for resource-constrained environments. Trigger with /vind-status'
 allowed-tools: ['read_file', 'run_in_terminal', 'grep_search', 'semantic_search', 'get_terminal_output', 'create_file']
-tags: ['sunkworks', 'live-stream', 'failure-tolerant']
 ---
 
 # Vind Operator Expert
@@ -360,4 +358,3 @@ ssh admin@synology-ip "top -bn1 | head -20"
 2. Synology Container Manager has hidden memory overhead
 3. ARM devices need 75% of x86 resource limits
 4. Cross-arch testing catches problems before production
-```

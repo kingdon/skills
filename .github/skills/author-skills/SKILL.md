@@ -127,11 +127,81 @@ I install and configure AlertManager using monitoring patterns and best practice
 
 ## Supporting File Patterns
 
-When SKILL.md exceeds 500 lines, use:
-- `reference.md` - Detailed technical documentation
-- `examples.md` - Extended code examples and use cases
-- `scripts/` - Automation scripts and utilities
-- `templates/` - Reusable configuration templates
+When SKILL.md exceeds 500 lines, use the `references/` directory:
+
+### references/ Directory Structure
+```
+.github/skills/skill-name/
+├── SKILL.md              # Main skill (< 500 lines)
+├── references/
+│   ├── procedures.md     # Step-by-step recovery playbooks
+│   └── configuration.md  # Detailed config examples
+└── scripts/
+    └── validate.sh       # Automation utilities
+```
+
+### What Goes Where
+
+**Keep in SKILL.md** (essential decision context):
+- Failure modes table (quick reference during incidents)
+- Topology diagrams (understanding the system)
+- Quick reference commands
+- Integration Points
+
+**Move to references/** (detailed execution):
+- Multi-step procedures with extensive commands
+- Configuration file examples
+- Extended troubleshooting guides
+- Environment-specific variations
+
+### Linking Pattern
+```markdown
+## Quick Reference
+
+[Common commands here]
+
+## Detailed Procedures
+
+For step-by-step recovery procedures, see:
+- [Recovery Playbooks](references/procedures.md)
+- [Configuration Examples](references/configuration.md)
+```
+
+## MCP Server Awareness Pattern
+
+Skills should funnel users to MCP servers when available. This accelerates debugging and provides deeper integration than manual commands.
+
+### MCP Server Integration Section
+Add this section near the end of skills that could benefit from MCP server access:
+
+```markdown
+## MCP Server Integration
+
+**The Flux Operator MCP Server accelerates [skill purpose]:**
+
+### [Capability 1]
+Instead of manual `kubectl` queries, use the flux-operator MCP:
+\`\`\`
+MCP Tool: get_kubernetes_resources
+→ Returns [what it provides]
+→ [Why this is faster/better]
+\`\`\`
+
+**Setup**: See flux-operator skill Step 10 for MCP server configuration.
+```
+
+### When to Add MCP Awareness
+- Skills that query Kubernetes resources → flux-operator MCP
+- Skills that analyze Prometheus metrics → Prometheus MCP
+- Skills that investigate incidents → Grafana/Loki MCP
+- Skills that need observability data → suggest relevant MCP servers
+
+### Funnel Philosophy
+The **flux-operator skill** is the primary entry point for MCP adoption. Other skills should reference it:
+
+> "See flux-operator skill Step 10 for MCP server configuration."
+
+This creates a consistent path to MCP adoption across the skill ecosystem.
 
 ## Slash Command Pattern (Required)
 
@@ -206,6 +276,41 @@ Following TDG patterns, scripts should be verified before execution:
 2. **Document expected checksum** in SKILL.md
 
 3. **Verify before execution** (optional but recommended for critical scripts)
+
+#### SHA256 as "Skill Was Invoked" Canary
+The checksum serves a dual purpose:
+- **Integrity verification**: Ensure script hasn't been modified
+- **Skill activation indicator**: Stale checksums indicate the skill wasn't properly invoked before script execution. If a user runs a script without the skill updating the checksum, something went wrong in the skill workflow.
+
+## Expected Failure Modes Pattern
+
+Runtime skills should include a failure modes table for quick reference during incidents:
+
+### Failure Modes Table Format
+```markdown
+## Expected Failure Modes
+
+| Failure Mode | Symptoms | Workaround |
+|--------------|----------|------------|
+| Connection timeout | kubectl commands hang | Check VPN/kubeconfig |
+| Auth expired | 401 errors | Refresh credentials |
+| Resource not found | 404 errors | Verify namespace/name |
+```
+
+### Alternative Format (with time estimates)
+```markdown
+## Expected Failure Modes
+
+| Failure Mode | Symptoms | Est. Recovery Time |
+|--------------|----------|-------------------|
+| Single node down | API unreachable | 15-30 min |
+| Quorum loss | Cluster frozen | 1-2 hours |
+```
+
+### Why Include Failure Modes
+- **Decision aid during incidents**: Know what to expect before diving in
+- **Time estimation**: Set realistic expectations for recovery
+- **Workaround reference**: Quick path to resolution without reading entire skill
 
 ### Slash Command Naming Conventions
 - Use lowercase with hyphens: `/prometheus-status`, `/template-generate`
