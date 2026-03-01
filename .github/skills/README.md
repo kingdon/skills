@@ -4,7 +4,7 @@ This directory contains a collection of custom skills designed for the Gemini CL
 
 ## Acknowledgements
 
-Much of the thinking that prompted these skills to be developed in the open, on my own time, happened while on paid time, working for **Navteca, LLC.** as a DevOps Engineer on the SMDC project (also known internally as the Science Cloud Infrastructure Project, or SCIP), building Science Cloud. All rights reserved.
+Much of the thinking that prompted these skills to be developed in the open, on my own time, happened while on paid time, working for **Navteca, LLC.** as a DevOps Engineer on the SMDC project (also known internally as the Science Cloud Infrastructure Project, or SCIP), building Science Cloud.
 
 Many of these skills are sourced from [github.com/kingdon/skills](https://github.com/kingdon/skills).
 
