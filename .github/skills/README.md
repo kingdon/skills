@@ -37,4 +37,4 @@ All skills have been carefully designed using the `author-skills` skill to ensur
 
 Several of these skills and the broader Mecris agent rely on the Model Context Protocol (MCP) to interact with external tools (like GitHub, SQLite, etc.). The MCP server is configured in a few places across the project. 
 
-For detailed information on how MCP is configured and used within Mecris, please see the [MCP Configurations Document](../../docs/MCP_CONFIGURATIONS.md).
+For detailed information on how MCP is configured and used within Mecris, please see the [MCP Configurations Document](https://github.com/kingdonb/mecris/blob/main/docs/MCP_CONFIGURATIONS.md).
